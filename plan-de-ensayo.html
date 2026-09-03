@@ -321,8 +321,8 @@
   .actor-chip .s{ font-size: 11.5px; color: var(--muted); margin-top:2px; }
 
   /* tab 3: matrix */
-  .matrix-wrap{ overflow-x:auto; border:1px solid var(--border); border-radius: 14px; }
-  table.matrix{ border-collapse:collapse; font-size: 12px; min-width: 900px; }
+  .matrix-wrap{ overflow-x:auto; -webkit-overflow-scrolling:touch; border:1px solid var(--border); border-radius: 14px; }
+  table.matrix{ border-collapse:collapse; font-size: 12px; table-layout: fixed; }
   table.matrix th, table.matrix td{ border-bottom:1px solid var(--border); border-right:1px solid var(--border); padding: 0; }
   table.matrix thead th{
     height: 190px;
@@ -337,19 +337,28 @@
     font-size:11.5px;
     padding: 6px 0;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-height: 178px;
+    margin: 0 auto;
   }
-  table.matrix thead th.corner{ background: var(--panel-2); }
+  table.matrix thead th.corner{
+    background: var(--panel-2);
+    position: sticky; left:0; z-index:3;
+  }
   table.matrix tbody th{
     text-align:left;
     background: var(--panel-2);
     padding: 7px 12px;
     white-space:nowrap;
-    position: sticky; left:0;
+    overflow:hidden;
+    text-overflow: ellipsis;
+    position: sticky; left:0; z-index:2;
     font-weight:600;
     font-size: 12px;
   }
   table.matrix tbody th .loc{ display:block; color: var(--muted); font-size:10.5px; font-weight:400; }
-  table.matrix td{ text-align:center; width: 42px; }
+  table.matrix td{ text-align:center; }
   table.matrix td .dot{
     width: 9px; height:9px; border-radius:50%;
     background: #2a3040;
@@ -357,6 +366,7 @@
   }
   table.matrix td.on .dot{ background: var(--accent); box-shadow: 0 0 6px rgba(232,163,62,0.6); }
   table.matrix tbody tr:nth-child(even){ background: rgba(255,255,255,0.015); }
+  table.matrix tbody tr:nth-child(even) th{ background: var(--panel-2); }
 
   .legend{
     display:flex;
@@ -652,6 +662,10 @@
   // ================= TAB 3: MATRIZ COMPLETA =================
   function renderMatrix(){
     const table = document.getElementById('matrixTable');
+    let colgroup = '<colgroup><col style="width:150px">';
+    actorsList.forEach(() => { colgroup += '<col style="width:42px">'; });
+    colgroup += '</colgroup>';
+
     let thead = '<thead><tr><th class="corner"></th>';
     actorsList.forEach(a => { thead += `<th><div class="rot">${shortName(a)}</div></th>`; });
     thead += '</tr></thead>';
@@ -666,7 +680,7 @@
       tbody += '</tr>';
     });
     tbody += '</tbody>';
-    table.innerHTML = thead + tbody;
+    table.innerHTML = colgroup + thead + tbody;
 
     const legend = document.getElementById('matrixLegend');
     const uniqueLocs = [...new Set(scenes.map(s => s.location).filter(Boolean))];
