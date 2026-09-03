@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plan de ensayo</title>
+<style>
+  :root{
+    --bg:#0a0e16;
+    --panel:#121826;
+    --panel-2:#0e1420;
+    --border:#232a3a;
+    --text:#eef1f6;
+    --muted:#8791a6;
+    --accent:#e8a33e;
+    --accent-soft: rgba(232,163,62,0.14);
+    --accent-border: rgba(232,163,62,0.55);
+    --ready:#43d68a;
+    --ready-soft: rgba(67,214,138,0.13);
+    --ready-border: rgba(67,214,138,0.4);
+    --link:#6fb3f2;
+  }
+  *{ box-sizing:border-box; }
+  html,body{
+    margin:0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  .stage{
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 34px 22px 70px;
+  }
+  header.top{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-bottom: 22px;
+  }
+  .eyebrow{
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  h1{
+    font-family: ui-serif, Georgia, "Times New Roman", serif;
+    font-weight: 500;
+    font-size: 38px;
+    margin: 0;
+    color: var(--text);
+  }
+  .obra-meta{
+    text-align:right;
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .obra-meta .obra-name{ color: var(--text); font-weight:600; font-size:15px; }
+
+  .tabs{
+    display:flex;
+    gap: 4px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 5px;
+    margin-bottom: 22px;
+  }
+  .tab{
+    flex:1;
+    text-align:center;
+    padding: 12px 10px;
+    border-radius: 10px;
+    font-size: 14.5px;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    transition: background .15s, color .15s;
+  }
+  .tab.active{
+    background: #f2e8d7;
+    color: #221c10;
+  }
+  .tab:not(.active):hover{ color: var(--text); }
+
+  .view{ display:none; }
+  .view.active{ display:block; }
+
+  .grid2{
+    display:grid;
+    grid-template-columns: 340px 1fr;
+    gap: 22px;
+    align-items:start;
+  }
+  @media (max-width: 800px){ .grid2{ grid-template-columns: 1fr; } }
+
+  .panel{
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 22px;
+  }
+  .panel-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    margin-bottom: 4px;
+  }
+  .panel h2{
+    font-size: 17px;
+    margin: 0 0 4px;
+  }
+  .panel .sub{
+    font-size: 13px;
+    color: var(--muted);
+    margin: 0 0 16px;
+  }
+  .link-btn{
+    background:none;
+    border:none;
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 600;
+    cursor:pointer;
+    padding: 0;
+  }
+  .link-btn + .link-btn{ margin-left: 12px; }
+  .link-btn:hover{ text-decoration: underline; }
+
+  /* actor checkboxes */
+  .actor-grid{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .actor-chk{
+    display:flex;
+    align-items:center;
+    gap: 10px;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--panel-2);
+    cursor: pointer;
+    font-size: 13.5px;
+    font-weight: 600;
+    user-select:none;
+    transition: border-color .15s, background .15s;
+  }
+  .actor-chk .box{
+    width: 16px; height:16px;
+    border-radius: 4px;
+    border: 1.6px solid var(--muted);
+    flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    font-size: 11px;
+    color: var(--bg);
+  }
+  .actor-chk.on{
+    border-color: var(--accent-border);
+    background: #2b2313;
+  }
+  .actor-chk.on .box{
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  .actor-chk.on .box::after{ content:'✓'; }
+
+  /* stat cards */
+  .stat-row{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 22px;
+  }
+  .stat-card{
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 20px;
+  }
+  .stat-card .num{
+    font-size: 34px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .stat-card.ready .num{ color: var(--ready); }
+  .stat-card.warn .num{ color: var(--accent); }
+  .stat-card .label{ font-size: 13px; color: var(--muted); }
+
+  .section-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    margin: 6px 0 12px;
+  }
+  .section-head h3{ font-size: 15px; margin:0; }
+  .section-head .hint{ font-size: 12px; color: var(--muted); }
+
+  .empty-box{
+    border: 1.5px dashed var(--border);
+    border-radius: 12px;
+    padding: 22px;
+    text-align:center;
+    color: var(--muted);
+    font-size: 13.5px;
+    margin-bottom: 22px;
+  }
+
+  .scene-card{
+    display:flex;
+    align-items:center;
+    gap: 16px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-bottom: 10px;
+  }
+  .scene-card.ready{ border-left-color: var(--ready); }
+  .scene-card.almost{ border-left-color: var(--accent); }
+  .scene-num{
+    font-family: ui-serif, Georgia, serif;
+    font-size: 26px;
+    font-weight: 600;
+    width: 40px;
+    flex-shrink:0;
+    color: var(--text);
+  }
+  .scene-info{ flex:1; min-width:0; }
+  .scene-loc{ color: var(--link); font-weight: 600; font-size: 14px; margin-bottom: 2px; }
+  .scene-cast{ color: var(--muted); font-size: 12.5px; }
+  .scene-eyebrow{ font-size:10px; letter-spacing:.08em; color:var(--muted); font-weight:700; margin-bottom:2px; }
+  .badge{
+    flex-shrink:0;
+    padding: 6px 13px;
+    border-radius: 999px;
+    font-size: 12.5px;
+    font-weight: 700;
+    white-space:nowrap;
+  }
+  .badge.ready{ background: var(--ready-soft); color: var(--ready); border:1px solid var(--ready-border); }
+  .badge.missing{ background: var(--accent-soft); color: var(--accent); border:1px solid var(--accent-border); }
+  .badge.muted{ background: transparent; color: var(--muted); border:1px solid var(--border); font-weight:600; }
+
+  .rest-toggle{
+    width:100%;
+    text-align:left;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 18px;
+    color: var(--text);
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor:pointer;
+  }
+  .rest-toggle:hover{ border-color: var(--accent-border); }
+  .rest-list{ margin-top: 10px; display:none; }
+  .rest-list.open{ display:block; }
+  .rest-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap: 12px;
+    padding: 10px 6px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .rest-row:last-child{ border-bottom:none; }
+  .rest-row .who{ color: var(--muted); }
+  .rest-row .name{ color: var(--text); font-weight:600; }
+  .rest-row .loc{ color: var(--link); }
+
+  /* tab 2: scene picker */
+  .scene-picker{
+    display:grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+  }
+  @media (max-width: 500px){ .scene-picker{ grid-template-columns: 1fr 1fr; } }
+  .scene-btn{
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 12px;
+    cursor:pointer;
+    text-align:left;
+  }
+  .scene-btn .n{ font-weight:700; font-size: 13.5px; }
+  .scene-btn .l{ font-size: 11.5px; color: var(--muted); margin-top:2px; }
+  .scene-btn.on{ background: var(--accent-soft); border-color: var(--accent-border); }
+  .scene-btn.on .n{ color: var(--accent); }
+
+  .callsheet-label{ font-size:11px; font-weight:700; letter-spacing:.1em; color:var(--accent); margin-bottom:6px; }
+  .callsheet-title{ font-size: 20px; font-weight:700; margin-bottom: 18px; }
+
+  .actor-chip-grid{
+    display:grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 22px;
+  }
+  @media (max-width:650px){ .actor-chip-grid{ grid-template-columns: 1fr 1fr; } }
+  .actor-chip{
+    background: var(--ready-soft);
+    border: 1px solid var(--ready-border);
+    border-radius: 10px;
+    padding: 10px 13px;
+  }
+  .actor-chip .n{ font-weight:700; font-size: 13.5px; color: var(--text); }
+  .actor-chip .s{ font-size: 11.5px; color: var(--muted); margin-top:2px; }
+
+  /* tab 3: matrix */
+  .matrix-wrap{ overflow-x:auto; border:1px solid var(--border); border-radius: 14px; }
+  table.matrix{ border-collapse:collapse; font-size: 12px; min-width: 900px; }
+  table.matrix th, table.matrix td{ border-bottom:1px solid var(--border); border-right:1px solid var(--border); padding: 0; }
+  table.matrix thead th{
+    height: 190px;
+    vertical-align: bottom;
+    background: var(--panel-2);
+    padding-bottom: 8px;
+  }
+  table.matrix thead th .rot{
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    font-weight:600;
+    font-size:11.5px;
+    padding: 6px 0;
+    white-space: nowrap;
+  }
+  table.matrix thead th.corner{ background: var(--panel-2); }
+  table.matrix tbody th{
+    text-align:left;
+    background: var(--panel-2);
+    padding: 7px 12px;
+    white-space:nowrap;
+    position: sticky; left:0;
+    font-weight:600;
+    font-size: 12px;
+  }
+  table.matrix tbody th .loc{ display:block; color: var(--muted); font-size:10.5px; font-weight:400; }
+  table.matrix td{ text-align:center; width: 42px; }
+  table.matrix td .dot{
+    width: 9px; height:9px; border-radius:50%;
+    background: #2a3040;
+    margin: 0 auto;
+  }
+  table.matrix td.on .dot{ background: var(--accent); box-shadow: 0 0 6px rgba(232,163,62,0.6); }
+  table.matrix tbody tr:nth-child(even){ background: rgba(255,255,255,0.015); }
+
+  .legend{
+    display:flex;
+    flex-wrap:wrap;
+    gap: 10px 18px;
+    margin: 16px 2px 0;
+  }
+  .legend-item{ display:flex; align-items:center; gap:6px; font-size:12px; color:var(--muted); }
+  .legend-dot{ width:8px; height:8px; border-radius:50%; }
+</style>
+</head>
+<body>
+<div class="stage">
+
+  <header class="top">
+    <div>
+      <div class="eyebrow">ASISTENCIA DE DIRECCIÓN</div>
+      <h1>Plan de ensayo</h1>
+    </div>
+    <div class="obra-meta">
+      <div class="obra-name">Regalos de Navidad</div>
+      <div id="metaCounts">21 escenas · 14 integrantes</div>
+    </div>
+  </header>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="cast">Tengo este elenco</button>
+    <button class="tab" data-tab="planner">Quiero hacer escenas</button>
+    <button class="tab" data-tab="matrix">Ver matriz completa</button>
+  </div>
+
+  <!-- TAB 1: TENGO ESTE ELENCO -->
+  <div class="view active" id="view-cast">
+    <div class="grid2">
+      <div class="panel">
+        <div class="panel-head">
+          <h2>¿Quién está disponible?</h2>
+        </div>
+        <p class="sub">Marcá a quienes vinieron al ensayo.</p>
+        <div style="margin-bottom:14px;">
+          <button class="link-btn" id="markAll">Marcar a todos</button>
+          <button class="link-btn" id="clearAll">Limpiar</button>
+        </div>
+        <div class="actor-grid" id="actorGrid"></div>
+      </div>
+
+      <div>
+        <div class="stat-row">
+          <div class="stat-card ready">
+            <div class="num" id="readyCount">0</div>
+            <div class="label">escenas listas para ensayar</div>
+          </div>
+          <div class="stat-card warn">
+            <div class="num" id="almostCount">0</div>
+            <div class="label">escenas a las que les falta una persona</div>
+          </div>
+        </div>
+
+        <div class="section-head">
+          <h3>Podés ensayar ahora</h3>
+          <span class="hint">Primero, las que aprovechan más gente</span>
+        </div>
+        <div id="readyList"></div>
+
+        <div class="section-head" id="almostHead" style="display:none;">
+          <h3>Si se suma una persona</h3>
+        </div>
+        <div id="almostList"></div>
+
+        <button class="rest-toggle" id="restToggle">► Ver el resto de las escenas (<span id="restCount">0</span>)</button>
+        <div class="rest-list" id="restList"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 2: QUIERO HACER ESCENAS -->
+  <div class="view" id="view-planner">
+    <div class="grid2">
+      <div class="panel">
+        <div class="panel-head">
+          <h2>¿Qué quieren ensayar?</h2>
+          <button class="link-btn" id="clearPlanner">Limpiar</button>
+        </div>
+        <p class="sub">Elegí una o varias escenas para armar el llamado.</p>
+        <div class="scene-picker" id="scenePicker"></div>
+      </div>
+
+      <div class="panel">
+        <div class="callsheet-label">LLAMADO COMBINADO</div>
+        <div class="callsheet-title" id="callsheetTitle">Elegí escenas para armar el llamado</div>
+        <div id="callsheetBody"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 3: MATRIZ COMPLETA -->
+  <div class="view" id="view-matrix">
+    <div class="panel">
+      <h2>Matriz de relación completa</h2>
+      <p class="sub">Cada punto marca que ese actor participa en esa escena.</p>
+      <div class="matrix-wrap">
+        <table class="matrix" id="matrixTable"></table>
+      </div>
+      <div class="legend" id="matrixLegend"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  const scenes = [
+    {id:1,  location:'', actors:['Zeta (Dolores)','Beba (Hanna)','Reina (Micaela)']},
+    {id:2,  location:'Celda', actors:['Justo','Morocha (Diamela)']},
+    {id:3,  location:'Bar', actors:['Frank (Imanol)','Estrella (Daniela)']},
+    {id:4,  location:'Empresa', actors:['Simon (Nacho)','Felicitas (Amapola)','Emilia (Vicky)','Perla (Cinthia)']},
+    {id:5,  location:'Sala de visitas', actors:['Ojitos (Raquel)','Roy (Fermin)','Justo']},
+    {id:6,  location:'Celda', actors:['Justo','Morocha (Diamela)','Ojitos (Raquel)']},
+    {id:7,  location:'Sala Médica', actors:['Isaac (Tomás)','Beba (Hanna)','Estrella (Daniela)','Frank (Imanol)']},
+    {id:8,  location:'Ascensor', actors:['Roy (Fermin)','Felicitas (Amapola)','Perla (Cinthia)','Simon (Nacho)','Emilia (Vicky)']},
+    {id:9,  location:'Celda', actors:['Morocha (Diamela)','Justo','Ojitos (Raquel)','Reina (Micaela)']},
+    {id:10, location:'Sala de Visitas', actors:['Ojitos (Raquel)','Isaac (Tomás)','Justo']},
+    {id:11, location:'Sala Médica', actors:['Beba (Hanna)','Frank (Imanol)']},
+    {id:12, location:'Empresa', actors:['Emilia (Vicky)','Roy (Fermin)','Simon (Nacho)','Perla (Cinthia)']},
+    {id:13, location:'Celda', actors:['Reina (Micaela)','Justo','Ojitos (Raquel)']},
+    {id:14, location:'Sala de Visitas', actors:['Simon (Nacho)','Morocha (Diamela)','Justo','Reina (Micaela)','Estrella (Daniela)']},
+    {id:15, location:'Calle', actors:['Zeta (Dolores)','Felicitas (Amapola)']},
+    {id:16, location:'Celda', actors:['Morocha (Diamela)','Ojitos (Raquel)']},
+    {id:17, location:'Sala Médica', actors:['Frank (Imanol)','Estrella (Daniela)','Isaac (Tomás)','Beba (Hanna)']},
+    {id:18, location:'Ascensor', actors:['Felicitas (Amapola)','Roy (Fermin)']},
+    {id:19, location:'Empresa', actors:['Felicitas (Amapola)','Roy (Fermin)','Perla (Cinthia)','Emilia (Vicky)']},
+    {id:20, location:'Sala de visitas', actors:['Ojitos (Raquel)','Isaac (Tomás)']},
+    {id:21, location:'', actors:'ALL'}
+  ];
+
+  const actorsList = ['Beba (Hanna)','Emilia (Vicky)','Estrella (Daniela)','Felicitas (Amapola)','Frank (Imanol)','Isaac (Tomás)','Justo','Morocha (Diamela)','Ojitos (Raquel)','Perla (Cinthia)','Reina (Micaela)','Roy (Fermin)','Simon (Nacho)','Zeta (Dolores)'];
+
+  const shortName = n => n; // se muestra el nombre completo: Personaje (Actor/Actriz)
+
+  const locationColors = {
+    'Celda': '#8b6dc7', 'Bar': '#c7874d', 'Empresa': '#4c8fc7',
+    'Sala de visitas': '#c76d93', 'Sala de Visitas': '#c76d93',
+    'Sala Médica': '#4daf8c', 'Ascensor': '#c7b34d', 'Calle': '#9bc74d', '': '#6b6875'
+  };
+
+  scenes.forEach(s => { if (s.actors === 'ALL') s.actors = actorsList.slice(); });
+
+  document.getElementById('metaCounts').textContent = `${scenes.length} escenas · ${actorsList.length} integrantes`;
+
+  // ---------- TABS ----------
+  document.querySelectorAll('.tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('view-' + btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  // ================= TAB 1: TENGO ESTE ELENCO =================
+  const available = new Set();
+  const actorGrid = document.getElementById('actorGrid');
+  actorsList.forEach(name => {
+    const div = document.createElement('div');
+    div.className = 'actor-chk';
+    div.innerHTML = `<span class="box"></span><span>${shortName(name)}</span>`;
+    div.addEventListener('click', () => {
+      if (available.has(name)) available.delete(name); else available.add(name);
+      renderCast();
+    });
+    div._name = name;
+    actorGrid.appendChild(div);
+  });
+
+  document.getElementById('markAll').addEventListener('click', () => { actorsList.forEach(a => available.add(a)); renderCast(); });
+  document.getElementById('clearAll').addEventListener('click', () => { available.clear(); renderCast(); });
+
+  function sceneCardHTML(scene, kind, badgeHTML){
+    const castStr = scene.actors.map(shortName).join(' · ');
+    return `<div class="scene-card ${kind}">
+      <div class="scene-num">${scene.id}</div>
+      <div class="scene-info">
+        <div class="scene-eyebrow">ESCENA</div>
+        <div class="scene-loc">${scene.location || 'Sin ubicación'}</div>
+        <div class="scene-cast">${castStr}</div>
+      </div>
+      ${badgeHTML}
+    </div>`;
+  }
+
+  function renderCast(){
+    actorGrid.querySelectorAll('.actor-chk').forEach(div => {
+      div.classList.toggle('on', available.has(div._name));
+    });
+
+    const ready = [], almost = [], rest = [];
+    scenes.forEach(s => {
+      const missing = s.actors.filter(a => !available.has(a));
+      if (missing.length === 0) ready.push(s);
+      else if (missing.length === 1) almost.push({s, missing: missing[0]});
+      else rest.push({s, missing});
+    });
+
+    ready.sort((a,b) => b.actors.length - a.actors.length);
+    almost.sort((a,b) => a.s.id - b.s.id);
+    rest.sort((a,b) => a.s.id - b.s.id);
+
+    document.getElementById('readyCount').textContent = ready.length;
+    document.getElementById('almostCount').textContent = almost.length;
+
+    const readyList = document.getElementById('readyList');
+    if (ready.length === 0){
+      readyList.innerHTML = `<div class="empty-box">No hay escenas completas con esta combinación.</div>`;
+    } else {
+      readyList.innerHTML = ready.map(s => sceneCardHTML(s, 'ready', `<span class="badge ready">Lista</span>`)).join('');
+    }
+
+    const almostHead = document.getElementById('almostHead');
+    const almostList = document.getElementById('almostList');
+    if (almost.length === 0){
+      almostHead.style.display = 'none';
+      almostList.innerHTML = '';
+    } else {
+      almostHead.style.display = 'flex';
+      almostList.innerHTML = almost.map(({s, missing}) => sceneCardHTML(s, 'almost', `<span class="badge missing">Falta: ${shortName(missing)}</span>`)).join('');
+    }
+
+    document.getElementById('restCount').textContent = rest.length;
+    const restListEl = document.getElementById('restList');
+    restListEl.innerHTML = rest.map(({s, missing}) => `
+      <div class="rest-row">
+        <div><span class="name">Escena ${s.id}</span> · <span class="loc">${s.location || 'Sin ubicación'}</span></div>
+        <div class="who">Faltan: ${missing.map(shortName).join(', ')}</div>
+      </div>`).join('');
+  }
+
+  document.getElementById('restToggle').addEventListener('click', function(){
+    const list = document.getElementById('restList');
+    const open = list.classList.toggle('open');
+    this.textContent = (open ? '▼' : '►') + ' Ver el resto de las escenas (' + document.getElementById('restCount').textContent + ')';
+  });
+
+  // ================= TAB 2: QUIERO HACER ESCENAS =================
+  const selectedScenes = new Set();
+  const scenePicker = document.getElementById('scenePicker');
+  scenes.forEach(s => {
+    const btn = document.createElement('div');
+    btn.className = 'scene-btn';
+    btn.innerHTML = `<div class="n">Escena ${s.id}</div><div class="l">${s.location || 'Sin ubicación'}</div>`;
+    btn.addEventListener('click', () => {
+      if (selectedScenes.has(s.id)) selectedScenes.delete(s.id); else selectedScenes.add(s.id);
+      renderPlanner();
+    });
+    btn._id = s.id;
+    scenePicker.appendChild(btn);
+  });
+  document.getElementById('clearPlanner').addEventListener('click', () => { selectedScenes.clear(); renderPlanner(); });
+
+  function renderPlanner(){
+    scenePicker.querySelectorAll('.scene-btn').forEach(b => b.classList.toggle('on', selectedScenes.has(b._id)));
+
+    const chosen = scenes.filter(s => selectedScenes.has(s.id));
+    const title = document.getElementById('callsheetTitle');
+    const body = document.getElementById('callsheetBody');
+
+    if (chosen.length === 0){
+      title.textContent = 'Elegí escenas para armar el llamado';
+      body.innerHTML = `<div class="empty-box">Todavía no elegiste ninguna escena.</div>`;
+      return;
+    }
+
+    const actorScenes = new Map(); // actor -> [scene ids]
+    chosen.forEach(s => s.actors.forEach(a => {
+      if (!actorScenes.has(a)) actorScenes.set(a, []);
+      actorScenes.get(a).push(s.id);
+    }));
+
+    title.textContent = `${actorScenes.size} integrante${actorScenes.size===1?'':'s'} para ${chosen.length} escena${chosen.length===1?'':'s'}`;
+
+    const chipNames = [...actorScenes.keys()].sort((a,b) => shortName(a).localeCompare(shortName(b),'es'));
+    const chipsHTML = chipNames.map(name => `
+      <div class="actor-chip">
+        <div class="n">${shortName(name)}</div>
+        <div class="s">Esc. ${actorScenes.get(name).sort((a,b)=>a-b).join(', ')}</div>
+      </div>`).join('');
+
+    const sortedChosen = chosen.slice().sort((a,b) => a.id - b.id);
+    const cardsHTML = sortedChosen.map(s => sceneCardHTML(s, 'ready', `<span class="badge ready">Lista</span>`)).join('');
+
+    body.innerHTML = `<div class="actor-chip-grid">${chipsHTML}</div>${cardsHTML}`;
+  }
+
+  // ================= TAB 3: MATRIZ COMPLETA =================
+  function renderMatrix(){
+    const table = document.getElementById('matrixTable');
+    let thead = '<thead><tr><th class="corner"></th>';
+    actorsList.forEach(a => { thead += `<th><div class="rot">${shortName(a)}</div></th>`; });
+    thead += '</tr></thead>';
+
+    let tbody = '<tbody>';
+    scenes.forEach(s => {
+      tbody += `<tr><th>Escena ${s.id}<span class="loc">${s.location || 'Sin ubicación'}</span></th>`;
+      actorsList.forEach(a => {
+        const on = s.actors.includes(a);
+        tbody += `<td class="${on ? 'on' : ''}"><div class="dot"></div></td>`;
+      });
+      tbody += '</tr>';
+    });
+    tbody += '</tbody>';
+    table.innerHTML = thead + tbody;
+
+    const legend = document.getElementById('matrixLegend');
+    const uniqueLocs = [...new Set(scenes.map(s => s.location).filter(Boolean))];
+    legend.innerHTML = uniqueLocs.map(loc => `<div class="legend-item"><span class="legend-dot" style="background:${locationColors[loc]}"></span>${loc}</div>`).join('');
+  }
+
+  renderCast();
+  renderPlanner();
+  renderMatrix();
+})();
+</script>
+</body>
+</html>
