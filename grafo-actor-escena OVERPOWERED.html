@@ -113,36 +113,38 @@
   .node{ cursor: pointer; }
   .node rect.dim{ opacity: 0.28; }
   .node text.dim{ opacity: 0.28; }
+
   .node.active rect{
-    stroke: var(--accent);
+    stroke: var(--nc, var(--accent));
     stroke-width: 3;
-    fill: #3d2f16;
-    filter: drop-shadow(0 0 6px rgba(231,163,62,0.85)) drop-shadow(0 0 14px rgba(231,163,62,0.5));
-    animation: pulse-active 1.4s ease-in-out infinite;
+    fill: var(--nc-fill, #332a1c);
+    filter: drop-shadow(0 0 6px var(--nc-glow1, rgba(231,163,62,0.85))) drop-shadow(0 0 14px var(--nc-glow2, rgba(231,163,62,0.5)));
+    animation: pulse-active 1.3s ease-in-out infinite;
   }
-  .node.active text{ fill: #ffcf7a; font-weight: 700; }
-  .node.active text.sub{ fill: #e2b876; }
+  .node.active text{ fill: var(--nc-text, #ffcf7a); font-weight: 700; }
+  .node.active text.sub{ fill: var(--nc-text, #e2b876); opacity: .85; }
   @keyframes pulse-active{
-    0%, 100% { stroke-width: 3; filter: drop-shadow(0 0 6px rgba(231,163,62,0.85)) drop-shadow(0 0 14px rgba(231,163,62,0.5)); }
-    50% { stroke-width: 3.6; filter: drop-shadow(0 0 10px rgba(231,163,62,1)) drop-shadow(0 0 22px rgba(231,163,62,0.75)); }
+    0%, 100% { stroke-width: 3; transform: scale(1); }
+    50% { stroke-width: 3.8; transform: scale(1.035); }
   }
+  .node.active rect{ transform-box: fill-box; transform-origin: center; }
+
   .node.related rect{
-    stroke: var(--accent);
-    stroke-width: 1.4;
-    fill: #2c2720;
+    stroke: var(--nc, var(--accent));
+    stroke-width: 1.6;
+    fill: var(--nc-fill-soft, #2c2720);
   }
-  .node.related text{ fill: #f1d9ab; }
+  .node.related text{ fill: var(--nc-text, #f1d9ab); }
 
   .edge{
     fill: none;
     stroke: var(--edge);
     stroke-width: 1.1;
   }
-  .edge.dim{ stroke: var(--edge-dim); }
+  .edge.dim{ stroke: var(--edge-dim) !important; }
   .edge.lit{
-    stroke: var(--accent);
-    stroke-width: 2;
-    opacity: 0.9;
+    stroke-width: 2.2;
+    opacity: 0.92;
   }
 
   .legend{
@@ -201,14 +203,14 @@
     font-size: 13px;
   }
   .chip.removable{ cursor: pointer; }
-  .chip.removable:hover{ background: rgba(231,163,62,0.32); }
+  .chip.removable:hover{ filter: brightness(1.25); }
 </style>
 </head>
 <body>
 <div class="stage">
   <header>
     <h1>Mapa de elenco por escena</h1>
-    <p>Grafo de red de las 21 escenas y los 14 actores. Hacé click en una o varias escenas y/o actores para resaltarlos en simultáneo — los nodos relacionados suben al frente de cada columna.</p>
+    <p>Grafo de red de las 21 escenas y los 14 actores. Hacé click en una o varias escenas y/o actores para resaltarlos en simultáneo — cada selección se enciende con su propio color y los nodos relacionados suben al frente de cada columna.</p>
   </header>
 
   <div class="toolbar">
@@ -231,30 +233,30 @@
 <script>
 (function(){
   const scenes = [
-    {id:1,  location:'', actors:['Zeta (Dolores)','Beba (Hanna)','Reina (Micaela)']},
-    {id:2,  location:'Celda', actors:['Justo','Morocha (Diamela)']},
-    {id:3,  location:'Bar', actors:['Frank (Imanol)','Estrella (Daniela)']},
-    {id:4,  location:'Empresa', actors:['Simon (Nacho)','Felicitas (Amapola)','Emilia','Perla (Cinthia)']},
-    {id:5,  location:'Sala de visitas', actors:['Ojitos (Raquel)','Roy (Fermin)','Justo']},
-    {id:6,  location:'Celda', actors:['Justo','Morocha (Diamela)','Ojitos (Raquel)']},
-    {id:7,  location:'Sala Médica', actors:['Isaac (Tomás)','Beba (Hanna)','Estrella (Daniela)','Frank (Imanol)']},
-    {id:8,  location:'Ascensor', actors:['Roy (Fermin)','Felicitas (Amapola)','Perla (Cinthia)','Simon (Nacho)','Emilia']},
-    {id:9,  location:'Celda', actors:['Morocha (Diamela)','Justo','Ojitos (Raquel)','Reina (Micaela)']},
-    {id:10, location:'Sala de Visitas', actors:['Ojitos (Raquel)','Isaac (Tomás)','Justo']},
-    {id:11, location:'Sala Médica', actors:['Beba (Hanna)','Frank (Imanol)']},
-    {id:12, location:'Empresa', actors:['Emilia','Roy (Fermin)','Simon (Nacho)','Perla (Cinthia)']},
-    {id:13, location:'Celda', actors:['Reina (Micaela)','Justo','Ojitos (Raquel)']},
-    {id:14, location:'Sala de Visitas', actors:['Simon (Nacho)','Morocha (Diamela)','Justo','Reina (Micaela)','Estrella (Daniela)']},
-    {id:15, location:'Calle', actors:['Zeta (Dolores)','Felicitas (Amapola)']},
-    {id:16, location:'Celda', actors:['Morocha (Diamela)','Ojitos (Raquel)']},
-    {id:17, location:'Sala Médica', actors:['Frank (Imanol)','Estrella (Daniela)','Isaac (Tomás)','Beba (Hanna)']},
-    {id:18, location:'Ascensor', actors:['Felicitas (Amapola)','Roy (Fermin)']},
-    {id:19, location:'Empresa', actors:['Felicitas (Amapola)','Roy (Fermin)','Perla (Cinthia)','Emilia']},
-    {id:20, location:'Sala de visitas', actors:['Ojitos (Raquel)','Isaac (Tomás)']},
+    {id:1,  location:'', actors:['Zeta','Beba','Reina']},
+    {id:2,  location:'Celda', actors:['Justo','Morocha']},
+    {id:3,  location:'Bar', actors:['Frank','Estrella']},
+    {id:4,  location:'Empresa', actors:['Simon','Felicitas','Emilia','Perla']},
+    {id:5,  location:'Sala de visitas', actors:['Ojitos','Roy','Justo']},
+    {id:6,  location:'Celda', actors:['Justo','Morocha','Ojitos']},
+    {id:7,  location:'Sala Médica', actors:['Isaac','Beba','Estrella','Frank']},
+    {id:8,  location:'Ascensor', actors:['Roy','Felicitas','Perla','Simon','Emilia']},
+    {id:9,  location:'Celda', actors:['Morocha','Justo','Ojitos','Reina']},
+    {id:10, location:'Sala de Visitas', actors:['Ojitos','Isaac','Justo']},
+    {id:11, location:'Sala Médica', actors:['Beba','Frank']},
+    {id:12, location:'Empresa', actors:['Emilia','Roy','Simon','Perla']},
+    {id:13, location:'Celda', actors:['Reina','Justo','Ojitos']},
+    {id:14, location:'Sala de Visitas', actors:['Simon','Morocha','Justo','Reina','Estrella']},
+    {id:15, location:'Calle', actors:['Zeta','Felicitas']},
+    {id:16, location:'Celda', actors:['Morocha','Ojitos']},
+    {id:17, location:'Sala Médica', actors:['Frank','Estrella','Isaac','Beba']},
+    {id:18, location:'Ascensor', actors:['Felicitas','Roy']},
+    {id:19, location:'Empresa', actors:['Felicitas','Roy','Perla','Emilia']},
+    {id:20, location:'Sala de visitas', actors:['Ojitos','Isaac']},
     {id:21, location:'', actors:'ALL'}
   ];
 
-  const actorsList = ['Beba (Hanna)','Emilia','Estrella (Daniela)','Felicitas (Amapola)','Frank (Imanol)','Isaac (Tomás)','Justo','Morocha (Diamela)','Ojitos (Raquel)','Perla (Cinthia)','Reina (Micaela)','Roy (Fermin)','Simon (Nacho)','Zeta (Dolores)'];
+  const actorsList = ['Beba','Emilia','Estrella','Felicitas','Frank','Isaac','Justo','Morocha','Ojitos','Perla','Reina','Roy','Simon','Zeta'];
 
   const locationColors = {
     'Celda': '#8b6dc7',
@@ -267,6 +269,9 @@
     'Calle': '#9bc74d',
     '': '#6b6875'
   };
+
+  // paleta de colores para las selecciones (una "luz" distinta por nodo elegido)
+  const SELECT_PALETTE = ['#ffcf3a','#5fc9ff','#ff6ec7','#7fe38a','#c78bff','#ff9f5f','#5fe3c2','#e35f5f'];
 
   scenes.forEach(s => { if (s.actors === 'ALL') s.actors = actorsList.slice(); });
 
@@ -287,7 +292,7 @@
   const sceneX = 26;
   const actorX = W - 26 - actorW;
   const sceneContentH = (scenes.length - 1) * rowH;
-  const actorContentH = sceneContentH; // spread actors across same vertical extent
+  const actorContentH = sceneContentH;
   const H = topMargin + sceneContentH + 40;
 
   function sceneSlotY(slot){ return topMargin + slot * rowH; }
@@ -301,18 +306,21 @@
     for (const k in attrs) e.setAttribute(k, attrs[k]);
     return e;
   }
+  function hexToRgba(hex, alpha){
+    const h = hex.replace('#','');
+    const r = parseInt(h.substring(0,2),16), g = parseInt(h.substring(2,4),16), b = parseInt(h.substring(4,6),16);
+    return `rgba(${r},${g},${b},${alpha})`;
+  }
 
   svg.appendChild(Object.assign(el('text', {x: sceneX, y: topMargin - 26, class:'col-label'}), {textContent:'ESCENAS'}));
   svg.appendChild(Object.assign(el('text', {x: actorX, y: topMargin - 26, class:'col-label'}), {textContent:'ACTORES'}));
 
-  // ---- edges ----
   const edgeEls = edges.map(({si, ai}) => {
     const path = el('path', {class:'edge'});
     svg.appendChild(path);
     return {si, ai, path};
   });
 
-  // ---- scene nodes (group uses transform for position; children at local coords) ----
   const sceneEls = scenes.map((s, si) => {
     const g = el('g', {class:'node', 'data-type':'scene', 'data-index':si});
     g.appendChild(el('rect', {x: 0, y: 0, width: sceneW, height: sceneH, rx: 8}));
@@ -332,7 +340,6 @@
     return g;
   });
 
-  // ---- actor nodes ----
   const actorEls = actorsList.map((name, ai) => {
     const g = el('g', {class:'node', 'data-type':'actor', 'data-index':ai});
     g.appendChild(el('rect', {x: 0, y: 0, width: actorW, height: actorH, rx: 8}));
@@ -343,7 +350,6 @@
     return g;
   });
 
-  // legend
   const legend = document.getElementById('legend');
   const uniqueLocs = [...new Set(scenes.map(s => s.location).filter(Boolean))];
   uniqueLocs.forEach(loc => {
@@ -356,7 +362,7 @@
   // ---- animated position state ----
   const sceneCurY = scenes.map((_, i) => sceneSlotY(i));
   const actorCurY = actorsList.map((_, i) => actorSlotY(i));
-  let sceneOrder = scenes.map((_, i) => i);   // display order: array of original indices
+  let sceneOrder = scenes.map((_, i) => i);
   let actorOrder = actorsList.map((_, i) => i);
 
   function applyPositions(){
@@ -394,6 +400,18 @@
   // ---- selection state ----
   const selectedScenes = new Set();
   const selectedActors = new Set();
+  const selectionColor = new Map(); // key ("s3" / "a7") -> hex color
+
+  function colorFor(key){
+    if (!selectionColor.has(key)){
+      const used = new Set(selectionColor.values());
+      let c = SELECT_PALETTE.find(p => !used.has(p));
+      if (!c) c = SELECT_PALETTE[selectionColor.size % SELECT_PALETTE.length];
+      selectionColor.set(key, c);
+    }
+    return selectionColor.get(key);
+  }
+  function freeColor(key){ selectionColor.delete(key); }
 
   const statusEl = document.getElementById('status');
   const resetBtn = document.getElementById('resetBtn');
@@ -403,16 +421,75 @@
   function relatedScenesOf(ai){ return edges.filter(e => e.ai === ai).map(e => e.si); }
   function relatedActorsOf(si){ return edges.filter(e => e.si === si).map(e => e.ai); }
 
-  function computeHighlights(){
-    const highlightScenes = new Set(selectedScenes);
-    const highlightActors = new Set(selectedActors);
-    selectedActors.forEach(ai => relatedScenesOf(ai).forEach(si => highlightScenes.add(si)));
-    selectedScenes.forEach(si => relatedActorsOf(si).forEach(ai => highlightActors.add(ai)));
-    return {highlightScenes, highlightActors};
+  function setNodeColorVars(g, color){
+    g.style.setProperty('--nc', color);
+    g.style.setProperty('--nc-fill', hexToRgba(color, 0.22));
+    g.style.setProperty('--nc-fill-soft', hexToRgba(color, 0.13));
+    g.style.setProperty('--nc-glow1', hexToRgba(color, 0.85));
+    g.style.setProperty('--nc-glow2', hexToRgba(color, 0.5));
+    g.style.setProperty('--nc-text', color);
   }
 
-  function reorder(highlightScenes, highlightActors){
+  function render(){
+    // related-node color maps: first matching active selection wins (scenes checked first, then actors)
+    const relatedColorForActor = new Map();
+    const relatedColorForScene = new Map();
+    selectedScenes.forEach(si => {
+      const c = colorFor('s'+si);
+      relatedActorsOf(si).forEach(ai => { if (!selectedActors.has(ai) && !relatedColorForActor.has(ai)) relatedColorForActor.set(ai, c); });
+    });
+    selectedActors.forEach(ai => {
+      const c = colorFor('a'+ai);
+      relatedScenesOf(ai).forEach(si => { if (!selectedScenes.has(si) && !relatedColorForScene.has(si)) relatedColorForScene.set(si, c); });
+    });
+
+    const highlightScenes = new Set([...selectedScenes, ...relatedColorForScene.keys()]);
+    const highlightActors = new Set([...selectedActors, ...relatedColorForActor.keys()]);
     const anySelected = selectedScenes.size > 0 || selectedActors.size > 0;
+
+    sceneEls.forEach((g, si) => {
+      const rect = g.querySelector('rect');
+      const texts = g.querySelectorAll('text');
+      const isActive = selectedScenes.has(si);
+      const isRelated = !isActive && relatedColorForScene.has(si);
+      const isDim = anySelected && !highlightScenes.has(si);
+      g.classList.toggle('active', isActive);
+      g.classList.toggle('related', isRelated);
+      rect.classList.toggle('dim', isDim);
+      texts.forEach(t => t.classList.toggle('dim', isDim));
+      if (isActive) setNodeColorVars(g, colorFor('s'+si));
+      else if (isRelated) setNodeColorVars(g, relatedColorForScene.get(si));
+    });
+
+    actorEls.forEach((g, ai) => {
+      const rect = g.querySelector('rect');
+      const texts = g.querySelectorAll('text');
+      const isActive = selectedActors.has(ai);
+      const isRelated = !isActive && relatedColorForActor.has(ai);
+      const isDim = anySelected && !highlightActors.has(ai);
+      g.classList.toggle('active', isActive);
+      g.classList.toggle('related', isRelated);
+      rect.classList.toggle('dim', isDim);
+      texts.forEach(t => t.classList.toggle('dim', isDim));
+      if (isActive) setNodeColorVars(g, colorFor('a'+ai));
+      else if (isRelated) setNodeColorVars(g, relatedColorForActor.get(ai));
+    });
+
+    edgeEls.forEach(e => {
+      let color = null;
+      if (selectedScenes.has(e.si)) color = colorFor('s'+e.si);
+      else if (selectedActors.has(e.ai)) color = colorFor('a'+e.ai);
+      const lit = !!color;
+      e.path.classList.toggle('lit', lit);
+      e.path.classList.toggle('dim', anySelected && !lit);
+      e.path.style.stroke = lit ? color : '';
+    });
+
+    reorder(highlightScenes, highlightActors, anySelected);
+    updatePanel(anySelected);
+  }
+
+  function reorder(highlightScenes, highlightActors, anySelected){
     if (!anySelected){
       sceneOrder = scenes.map((_, i) => i);
       actorOrder = actorsList.map((_, i) => i);
@@ -430,44 +507,6 @@
     const targetActorY = new Array(actorsList.length);
     actorOrder.forEach((origIdx, slot) => { targetActorY[origIdx] = actorSlotY(slot); });
     animateTo(targetSceneY, targetActorY, 480);
-  }
-
-  function render(){
-    const {highlightScenes, highlightActors} = computeHighlights();
-    const anySelected = selectedScenes.size > 0 || selectedActors.size > 0;
-
-    sceneEls.forEach((g, si) => {
-      const rect = g.querySelector('rect');
-      const texts = g.querySelectorAll('text');
-      const isActive = selectedScenes.has(si);
-      const isRelated = !isActive && highlightScenes.has(si);
-      const isDim = anySelected && !highlightScenes.has(si);
-      g.classList.toggle('active', isActive);
-      g.classList.toggle('related', isRelated);
-      rect.classList.toggle('dim', isDim);
-      texts.forEach(t => t.classList.toggle('dim', isDim));
-    });
-
-    actorEls.forEach((g, ai) => {
-      const rect = g.querySelector('rect');
-      const texts = g.querySelectorAll('text');
-      const isActive = selectedActors.has(ai);
-      const isRelated = !isActive && highlightActors.has(ai);
-      const isDim = anySelected && !highlightActors.has(ai);
-      g.classList.toggle('active', isActive);
-      g.classList.toggle('related', isRelated);
-      rect.classList.toggle('dim', isDim);
-      texts.forEach(t => t.classList.toggle('dim', isDim));
-    });
-
-    edgeEls.forEach(e => {
-      const lit = selectedScenes.has(e.si) || selectedActors.has(e.ai);
-      e.path.classList.toggle('lit', lit);
-      e.path.classList.toggle('dim', anySelected && !lit);
-    });
-
-    reorder(highlightScenes, highlightActors);
-    updatePanel(anySelected);
   }
 
   function updatePanel(anySelected){
@@ -491,36 +530,42 @@
       html += '<div class="chip-group"><div class="chip-group-label">Escenas seleccionadas</div><div class="chip-row">';
       [...selectedScenes].sort((a,b)=>a-b).forEach(si => {
         const s = scenes[si];
-        html += `<span class="chip removable" data-remove-scene="${si}">Escena ${s.id}${s.location ? ' · ' + s.location : ''} ✕</span>`;
+        const c = colorFor('s'+si);
+        html += `<span class="chip removable" data-remove-scene="${si}" style="background:${hexToRgba(c,0.22)};border-color:${hexToRgba(c,0.6)};color:${c}">Escena ${s.id}${s.location ? ' · ' + s.location : ''} ✕</span>`;
       });
       html += '</div></div>';
     }
     if (nActors){
       html += '<div class="chip-group"><div class="chip-group-label">Actores seleccionados</div><div class="chip-row">';
       [...selectedActors].sort((a,b)=>a-b).forEach(ai => {
-        html += `<span class="chip removable" data-remove-actor="${ai}">${actorsList[ai]} ✕</span>`;
+        const c = colorFor('a'+ai);
+        html += `<span class="chip removable" data-remove-actor="${ai}" style="background:${hexToRgba(c,0.22)};border-color:${hexToRgba(c,0.6)};color:${c}">${actorsList[ai]} ✕</span>`;
       });
       html += '</div></div>';
     }
     panelBody.innerHTML = html;
 
     panelBody.querySelectorAll('[data-remove-scene]').forEach(chip => {
-      chip.addEventListener('click', () => { selectedScenes.delete(parseInt(chip.dataset.removeScene)); render(); });
+      chip.addEventListener('click', () => { const i = parseInt(chip.dataset.removeScene); selectedScenes.delete(i); freeColor('s'+i); render(); });
     });
     panelBody.querySelectorAll('[data-remove-actor]').forEach(chip => {
-      chip.addEventListener('click', () => { selectedActors.delete(parseInt(chip.dataset.removeActor)); render(); });
+      chip.addEventListener('click', () => { const i = parseInt(chip.dataset.removeActor); selectedActors.delete(i); freeColor('a'+i); render(); });
     });
   }
 
   sceneEls.forEach((g, si) => g.addEventListener('click', () => {
-    if (selectedScenes.has(si)) selectedScenes.delete(si); else selectedScenes.add(si);
+    if (selectedScenes.has(si)) { selectedScenes.delete(si); freeColor('s'+si); }
+    else selectedScenes.add(si);
     render();
   }));
   actorEls.forEach((g, ai) => g.addEventListener('click', () => {
-    if (selectedActors.has(ai)) selectedActors.delete(ai); else selectedActors.add(ai);
+    if (selectedActors.has(ai)) { selectedActors.delete(ai); freeColor('a'+ai); }
+    else selectedActors.add(ai);
     render();
   }));
-  resetBtn.addEventListener('click', () => { selectedScenes.clear(); selectedActors.clear(); render(); });
+  resetBtn.addEventListener('click', () => {
+    selectedScenes.clear(); selectedActors.clear(); selectionColor.clear(); render();
+  });
 
   render();
 })();
