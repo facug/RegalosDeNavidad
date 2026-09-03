@@ -1,9 +1,66 @@
-<html>
-  <head>
-    
-  </head>
-  <body>
-    <a href="grafo-actor-escena OVERPOWERED.html"> GRAFO SUPER PODEROSO </a>
-        <a href="grafo-actor-escena.html"> Grafo normal</a>
-  </body>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elegí tu grafo</title>
+<style>
+  body{
+    margin:0;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap: 30px;
+    background: repeating-linear-gradient(45deg, #ff6ec7, #ff6ec7 20px, #6effc7 20px, #6effc7 40px);
+    font-family: "Comic Sans MS", "Comic Sans", cursive;
+  }
+  h1{
+    color: #fff;
+    text-shadow: 3px 3px 0 #000;
+    font-size: 40px;
+    transform: rotate(-3deg);
+    margin-bottom: 10px;
+  }
+  a{
+    display:block;
+    text-decoration:none;
+    padding: 22px 46px;
+    border-radius: 50px;
+    border: 6px dashed #000;
+    font-weight: bold;
+    text-align:center;
+    transition: transform .15s;
+  }
+  a:hover{
+    transform: scale(1.15) rotate(2deg);
+  }
+  a:active{
+    transform: scale(0.9) rotate(-5deg);
+  }
+  .op{
+    background: gold;
+    color: #d2001f;
+    font-size: 30px;
+    box-shadow: 0 0 0 8px hotpink, 0 0 30px 10px yellow;
+    animation: pulse 0.8s infinite alternate;
+  }
+  @keyframes pulse{
+    from{ box-shadow: 0 0 0 8px hotpink, 0 0 20px 6px yellow; }
+    to{ box-shadow: 0 0 0 14px deeppink, 0 0 45px 20px orange; }
+  }
+  .normal{
+    background: #eaeaea;
+    color: #555;
+    font-size: 18px;
+    box-shadow: 3px 3px 0 #999;
+  }
+</style>
+</head>
+<body>
+  <h1>🎭 ELEGÍ TU GRAFO 🎭</h1>
+  <a class="op" href="grafo-actor-escena OVERPOWERED.html">🌟💥 GRAFO SUPER PODEROSO 💥🌟</a>
+  <a class="normal" href="grafo-actor-escena.html">grafo normal (el aburrido)</a>
+</body>
 </html>
